@@ -1,4 +1,4 @@
-import { AIChatMessage, AIChatCompletionDelta, AIChatCompletion } from '@microsoft/ai-chat-protocol';
+import { AIChatCompletion, AIChatCompletionDelta, AIChatMessage } from '@microsoft/ai-chat-protocol';
 
 export const apiBaseUrl = import.meta.env.VITE_BACKEND_API_URI || '';
 
@@ -12,8 +12,13 @@ export type ChatRequestOptions = {
 export async function getCompletion(options: ChatRequestOptions) {
   const apiUrl = options.apiUrl || apiBaseUrl;
 
-  // TODO: complete call to Chat API here
-  // const response =
+  const response = await fetch(`${apiUrl}/chat/stream`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      messages: options.messages,
+    }),
+  });
 
   if (options.stream) {
     return getChunksFromResponse<AIChatCompletionDelta>(response as Response, options.chunkIntervalMs);
@@ -71,4 +76,3 @@ export async function* getChunksFromResponse<T>(response: Response, intervalMs: 
     });
   }
 }
-
